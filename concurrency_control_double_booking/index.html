@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="tbl"></table>
+    <script>
+      async function run() {
+        const tbl = document.getElementById('tbl');
+        const res = await fetch('/seats');
+        const resarray = await res.json();
+        const j = resarray.sort((a, b) => a.seat_id - b.seat_id);
+        let tr;
+        for (let i = 0; i < j.length; i++) {
+          if (i % 3 === 0) {
+            tr = document.createElement('tr');
+            tbl.appendChild(tr);
+          }
+
+          const td = document.createElement('td');
+          td.textContent = j[i].seat_id;
+          td.style.backgroundColor = j[i].is_booked ? 'Red' : 'Green';
+          td.style.width = '50px';
+          td.style.height = '50px';
+          td.title = j[i].name;
+          td.addEventListener('click', async (e) => {
+            try {
+              const seatId = e.target.textContent;
+              const name = prompt('Enter your name');
+              const res = await fetch(`/${seatId}/${name}`, { method: 'PUT' });
+              const j = await res.json();
+              if (j.error) alert("FAILED! Couldn't book! already booked.");
+              else alert('Booked successfully!');
+
+              e.target.style.backgroundColor = 'red';
+            } catch (ex) {
+              alert('error booking ' + ex);
+            }
+          });
+          tr.appendChild(td);
+        }
+      }
+      run();
+    </script>
+  </body>
+</html>
