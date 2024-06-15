@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  pgmaster:
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./rep/pgmaster_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+
+  pgstandby:
+    image: postgres:13-alpine
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./rep/pgstandby_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
